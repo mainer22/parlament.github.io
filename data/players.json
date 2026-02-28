@@ -1,0 +1,401 @@
+[
+  {
+    "id": 1,
+    "name": "BillyHerrington",
+    "rank": "Боец",
+    "squad": "ralik",
+    "gear": {
+      "weapon": "-",
+      "secondary": "-",
+      "armor": "-",
+      "armor2": "-",
+      "build1": "-",
+      "build2": "-"
+    },
+    "builds": {
+      "build1Url": "",
+      "build2Url": ""
+    },
+    "stats": ""
+  },
+  {
+    "id": 2,
+    "name": "Joy_Livsi",
+    "rank": "Боец",
+    "squad": "ralik",
+    "gear": {
+      "weapon": "-",
+      "secondary": "-",
+      "armor": "-",
+      "armor2": "-",
+      "build1": "-",
+      "build2": "-"
+    },
+    "builds": {
+      "build1Url": "",
+      "build2Url": ""
+    },
+    "stats": ""
+  },
+  {
+    "id": 3,
+    "name": "Гена_Жужалка",
+    "rank": "Боец",
+    "squad": "ralik",
+    "gear": {
+      "weapon": "-",
+      "secondary": "-",
+      "armor": "-",
+      "armor2": "-",
+      "build1": "-",
+      "build2": "-"
+    },
+    "builds": {
+      "build1Url": "",
+      "build2Url": ""
+    },
+    "stats": ""
+  },
+  {
+    "id": 4,
+    "name": "Weil_Eraz",
+    "rank": "Боец",
+    "squad": "ralik",
+    "gear": {
+      "weapon": "-",
+      "secondary": "-",
+      "armor": "-",
+      "armor2": "-",
+      "build1": "-",
+      "build2": "-"
+    },
+    "builds": {
+      "build1Url": "",
+      "build2Url": ""
+    },
+    "stats": ""
+  },
+  {
+    "id": 5,
+    "name": "kirri_gons",
+    "rank": "Боец",
+    "squad": "2",
+    "gear": {
+      "weapon": "-",
+      "secondary": "-",
+      "armor": "-",
+      "armor2": "-",
+      "build1": "-",
+      "build2": "-"
+    },
+    "builds": {
+      "build1Url": "",
+      "build2Url": ""
+    },
+    "stats": ""
+  },
+  {
+    "id": 6,
+    "name": "Анкат",
+    "rank": "Офицер",
+    "squad": "2",
+    "gear": {
+      "weapon": "-",
+      "secondary": "-",
+      "armor": "-",
+      "armor2": "-",
+      "build1": "-",
+      "build2": "-"
+    },
+    "builds": {
+      "build1Url": "",
+      "build2Url": ""
+    },
+    "stats": ""
+  },
+  {
+    "id": 7,
+    "name": "ВадимПончик",
+    "rank": "Боец",
+    "squad": "2",
+    "gear": {
+      "weapon": "-",
+      "secondary": "-",
+      "armor": "-",
+      "armor2": "-",
+      "build1": "-",
+      "build2": "-"
+    },
+    "builds": {
+      "build1Url": "",
+      "build2Url": ""
+    },
+    "stats": ""
+  },
+  {
+    "id": 8,
+    "name": "Jwiqen",
+    "rank": "Боец",
+    "squad": "2",
+    "gear": {
+      "weapon": "-",
+      "secondary": "-",
+      "armor": "-",
+      "armor2": "-",
+      "build1": "-",
+      "build2": "-"
+    },
+    "builds": {
+      "build1Url": "",
+      "build2Url": ""
+    },
+    "stats": ""
+  },
+  {
+    "id": 9,
+    "name": "Twertew",
+    "rank": "Офицер",
+    "squad": "2",
+    "gear": {
+      "weapon": "-",
+      "secondary": "-",
+      "armor": "-",
+      "armor2": "-",
+      "build1": "-",
+      "build2": "-"
+    },
+    "builds": {
+      "build1Url": "",
+      "build2Url": ""
+    },
+    "stats": ""
+  },
+  {
+    "id": 10,
+    "name": "grakuskin",
+    "rank": "Боец",
+    "squad": "1",
+    "gear": {
+      "weapon": "-",
+      "secondary": "-",
+      "armor": "-",
+      "armor2": "-",
+      "build1": "-",
+      "build2": "-"
+    },
+    "builds": {
+      "build1Url": "",
+      "build2Url": ""
+    },
+    "stats": ""
+  },
+  {
+    "id": 11,
+    "name": "Белачкс",
+    "rank": "Боец",
+    "squad": "1",
+    "gear": {
+      "weapon": "-",
+      "secondary": "-",
+      "armor": "-",
+      "armor2": "-",
+      "build1": "-",
+      "build2": "-"
+    },
+    "builds": {
+      "build1Url": "",
+      "build2Url": ""
+    },
+    "stats": ""
+  },
+  {
+    "id": 12,
+    "name": "MayoRosa",
+    "rank": "Боец",
+    "squad": "1",
+    "gear": {
+      "weapon": "-",
+      "secondary": "-",
+      "armor": "-",
+      "armor2": "-",
+      "build1": "-",
+      "build2": "-"
+    },
+    "builds": {
+      "build1Url": "",
+      "build2Url": ""
+    },
+    "stats": ""
+  },
+  {
+    "id": 13,
+    "name": "Нанами_Волкерс",
+    "rank": "Боец",
+    "squad": "1",
+    "gear": {
+      "weapon": "-",
+      "secondary": "-",
+      "armor": "-",
+      "armor2": "-",
+      "build1": "-",
+      "build2": "-"
+    },
+    "builds": {
+      "build1Url": "",
+      "build2Url": ""
+    },
+    "stats": ""
+  },
+  {
+    "id": 14,
+    "name": "_SomeOnekiller_",
+    "rank": "Офицер",
+    "squad": "4",
+    "gear": {
+      "weapon": "-",
+      "secondary": "-",
+      "armor": "-",
+      "armor2": "-",
+      "build1": "-",
+      "build2": "-"
+    },
+    "builds": {
+      "build1Url": "",
+      "build2Url": ""
+    },
+    "stats": ""
+  },
+  {
+    "id": 15,
+    "name": "Lost_Senpai",
+    "rank": "Офицер",
+    "squad": "4",
+    "gear": {
+      "weapon": "-",
+      "secondary": "-",
+      "armor": "-",
+      "armor2": "-",
+      "build1": "-",
+      "build2": "-"
+    },
+    "builds": {
+      "build1Url": "",
+      "build2Url": ""
+    },
+    "stats": ""
+  },
+  {
+    "id": 16,
+    "name": "Roter_Morder",
+    "rank": "Лидер",
+    "squad": "4",
+    "gear": {
+      "weapon": "Scorpion +15",
+      "secondary": "-",
+      "armor": "Альбатрос-Разведчик +15",
+      "armor2": "Центурион +15",
+      "build1": "Жир",
+      "build2": "Скорость"
+    },
+    "builds": {
+      "build1Url": "",
+      "build2Url": ""
+    },
+    "stats": ""
+  },
+  {
+    "id": 17,
+    "name": "ProgramGamer__",
+    "rank": "Боец",
+    "squad": "4",
+    "gear": {
+      "weapon": "-",
+      "secondary": "-",
+      "armor": "-",
+      "armor2": "-",
+      "build1": "-",
+      "build2": "-"
+    },
+    "builds": {
+      "build1Url": "",
+      "build2Url": ""
+    },
+    "stats": ""
+  },
+  {
+    "id": 18,
+    "name": "Head_Hunterz",
+    "rank": "Боец",
+    "squad": "5",
+    "gear": {
+      "weapon": "-",
+      "secondary": "-",
+      "armor": "-",
+      "armor2": "-",
+      "build1": "-",
+      "build2": "-"
+    },
+    "builds": {
+      "build1Url": "",
+      "build2Url": ""
+    },
+    "stats": ""
+  },
+  {
+    "id": 19,
+    "name": "IalwaysYouWin",
+    "rank": "Боец",
+    "squad": "5",
+    "gear": {
+      "weapon": "-",
+      "secondary": "-",
+      "armor": "-",
+      "armor2": "-",
+      "build1": "-",
+      "build2": "-"
+    },
+    "builds": {
+      "build1Url": "",
+      "build2Url": ""
+    },
+    "stats": ""
+  },
+  {
+    "id": 20,
+    "name": "Omega_Alfa",
+    "rank": "Боец",
+    "squad": "5",
+    "gear": {
+      "weapon": "-",
+      "secondary": "-",
+      "armor": "-",
+      "armor2": "-",
+      "build1": "-",
+      "build2": "-"
+    },
+    "builds": {
+      "build1Url": "",
+      "build2Url": ""
+    },
+    "stats": ""
+  },
+  {
+    "id": 21,
+    "name": "Добрый_Наемик",
+    "rank": "Боец",
+    "squad": "5",
+    "gear": {
+      "weapon": "-",
+      "secondary": "-",
+      "armor": "-",
+      "armor2": "-",
+      "build1": "-",
+      "build2": "-"
+    },
+    "builds": {
+      "build1Url": "",
+      "build2Url": ""
+    },
+    "stats": ""
+  }
+]
