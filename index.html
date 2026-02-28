@@ -1038,85 +1038,103 @@
 
     </div>
   </div>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/fabric.js/5.3.0/fabric.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
-  <script>
-    const defaultPlayers = [
-      {
+<script>
+  // Инициализация Supabase
+  const SUPABASE_URL = 'https://slwjvzsylgnqmhpxjcqa.supabase.co'; // ЗАМЕНИТЕ на свой URL
+  const SUPABASE_KEY = 'sb_publishable_E_43B3FZE7vx7NpcQelC0w_AsGvDgqG'; // ЗАМЕНИТЕ на свой ключ
+  const supabase = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+
+  // Функция загрузки данных из БД
+  async function loadPlayersFromDB() {
+    try {
+      const { data, error } = await supabase
+        .from('players')
+        .select('*')
+        .order('name');
+      
+      if (error) throw error;
+      
+      if (data && data.length > 0) {
+        allPlayers = data;
+        return true;
+      }
+      return false;
+    } catch (e) {
+      console.error('Ошибка загрузки из БД:', e);
+      return false;
+    }
+  }
+
+  // Функция сохранения данных в БД
+  async function savePlayersToDB() {
+    try {
+      // Очищаем таблицу
+      const { error: deleteError } = await supabase
+        .from('players')
+        .delete()
+        .neq('id', 0);
+      
+      if (deleteError) throw deleteError;
+      
+      // Вставляем новые данные
+      if (allPlayers.length > 0) {
+        const { error: insertError } = await supabase
+          .from('players')
+          .insert(allPlayers);
+        
+        if (insertError) throw insertError;
+      }
+      
+      console.log('✅ Данные сохранены в Supabase');
+    } catch (e) {
+      console.error('❌ Ошибка сохранения:', e);
+    }
+  }
+
+  // Вспомогательная функция для синхронизации
+  async function syncWithDB() {
+    const loaded = await loadPlayersFromDB();
+    if (!loaded) {
+      // Если БД пуста, создаем тестового игрока
+      allPlayers = [{
         id: 1,
-        name: 'Player1',
-        rank: 'Лидер',
+        name: 'Тестовый игрок',
+        rank: 'Боец',
         squad: '1',
         gear: {
-          weapon: 'AK-74',
-          secondary: 'Makarov',
-          armor: 'Beryl',
-          armor2: 'Exolight',
-          build1: 'Сборка 1',
-          build2: 'Сборка 2'
-        },
-        builds: {
-          build1Url: '',
-          build2Url: ''
-        },
-        stats: 'Главный командир, основной штурмовик.'
-      },
-      {
-        id: 2,
-        name: 'Player2',
-        rank: 'Боец',
-        squad: '2',
-        gear: {
-          weapon: 'Groza',
-          secondary: 'P226',
-          armor: 'Стальной',
+          weapon: '-',
+          secondary: '-',
+          armor: '-',
           armor2: '-',
-          build1: 'Радиация',
+          build1: '-',
           build2: '-'
         },
         builds: {
           build1Url: '',
           build2Url: ''
         },
-        stats: 'Боец поддержки, бегает по квестам.'
-      }
-    ];
+        stats: 'Тестовый игрок для начала работы'
+      }];
+      await savePlayersToDB();
+    }
+    renderPlayers(getFilteredPlayers());
+    renderSquadsBoard();
+    loadClanStats();
+  }
 
-    let allPlayers = [...defaultPlayers];
+  // Запускаем синхронизацию при загрузке страницы
+  syncWithDB();
+</script>
+  <script>
+
+    let allPlayers = [];
     let currentSquad = 'all';
     let canEdit = true;
     let editingPlayerId = null;
-
-    async function loadPlayersFromServer() {
-      try {
-        const res = await fetch('/api/players');
-        if (!res.ok) throw new Error('HTTP ' + res.status);
-        const data = await res.json();
-        if (Array.isArray(data) && data.length > 0) {
-          allPlayers = data;
-          return true;
-        }
-        return false;
-      } catch (e) {
-        console.error('Ошибка загрузки /api/players', e);
-        return false;
-      }
-    }
-
-    async function savePlayersToServer() {
-      try {
-        const res = await fetch('/api/players', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify(allPlayers)
-        });
-        if (!res.ok) {
-          console.error('Сервер вернул ошибку при сохранении', res.status);
-        }
-      } catch (e) {
-        console.error('Ошибка сохранения /api/players', e);
-      }
-    }
-
+    
 document.querySelectorAll('.tab-btn').forEach(btn => {
   btn.onclick = function() {
     const tabName = this.dataset.tab;
@@ -1499,35 +1517,29 @@ function saveSquadsNotes() {
     }
 
     function savePlayerFromModal() {
+  // ... проверки ...
       if (!canEdit) return;
-
-      const name = document.getElementById('modalName').value.trim() || 'Безымянный';
-      const rank = document.getElementById('modalRank').value;
-      const squad = document.getElementById('modalSquad').value;
-      const weapon = document.getElementById('modalWeapon').value.trim() || '-';
-      const secondary = document.getElementById('modalSecondary').value.trim() || '-';
-      const armor = document.getElementById('modalArmor').value.trim() || '-';
-      const armor2 = document.getElementById('modalArmor2').value.trim() || '-';
-      const build1 = document.getElementById('modalBuild1').value.trim() || '-';
-      const build2 = document.getElementById('modalBuild2').value.trim() || '-';
-      const build1Url = document.getElementById('modalBuild1Url').value.trim();
-      const build2Url = document.getElementById('modalBuild2Url').value.trim();
-      const stats = document.getElementById('modalStats').value.trim();
-
-      if (squad !== 'reserve_out') {
-        const countInSquad = allPlayers.filter(p => p.squad === squad && p.id !== editingPlayerId).length;
-        if (countInSquad >= 6) {
-          alert('В этом отряде уже 6 игроков. Удали кого-то или выбери другой отряд.');
-          return;
-        }
-      }
-
-      const isNew = (editingPlayerId === null);
-      if (isNew && allPlayers.length >= 40) {
-        alert('Достигнут общий лимит 40 игроков.');
-        return;
-      }
-
+    
+          const name = document.getElementById('modalName').value.trim() || 'Безымянный';
+          const rank = document.getElementById('modalRank').value;
+          const squad = document.getElementById('modalSquad').value;
+          const weapon = document.getElementById('modalWeapon').value.trim() || '-';
+          const secondary = document.getElementById('modalSecondary').value.trim() || '-';
+          const armor = document.getElementById('modalArmor').value.trim() || '-';
+          const armor2 = document.getElementById('modalArmor2').value.trim() || '-';
+          const build1 = document.getElementById('modalBuild1').value.trim() || '-';
+          const build2 = document.getElementById('modalBuild2').value.trim() || '-';
+          const build1Url = document.getElementById('modalBuild1Url').value.trim();
+          const build2Url = document.getElementById('modalBuild2Url').value.trim();
+          const stats = document.getElementById('modalStats').value.trim();
+    
+          if (squad !== 'reserve_out') {
+            const countInSquad = allPlayers.filter(p => p.squad === squad && p.id !== editingPlayerId).length;
+            if (countInSquad >= 6) {
+              alert('В этом отряде уже 6 игроков. Удали кого-то или выбери другой отряд.');
+              return;
+            }
+          }
       if (editingPlayerId === null) {
         const newId = allPlayers.length ? Math.max(...allPlayers.map(p => p.id)) + 1 : 1;
         allPlayers.push({
@@ -1550,21 +1562,28 @@ function saveSquadsNotes() {
           player.stats = stats;
         }
       }
-
-      renderPlayers(getFilteredPlayers());
-      savePlayersToServer();
-      closePlayerModal();
-    }
-
-    function deletePlayerFromModal() {
+    
+      // СНАЧАЛА сохраняем в БД
+      savePlayersToDB().then(() => {
+        // ПОТОМ обновляем интерфейс
+        renderPlayers(getFilteredPlayers());
+        closePlayerModal();
+  });
+}
+    function deletePlayerFromModal()  {
       if (!canEdit || editingPlayerId === null) return;
       const ok = confirm('Удалить этого игрока?');
       if (!ok) return;
+      
       allPlayers = allPlayers.filter(p => p.id !== editingPlayerId);
-      renderPlayers(getFilteredPlayers());
-      savePlayersToServer();
-      closePlayerModal();
-    }
+      
+      // СНАЧАЛА сохраняем в БД
+      savePlayersToDB().then(() => {
+        // ПОТОМ обновляем интерфейс
+        renderPlayers(getFilteredPlayers());
+        closePlayerModal();
+      });
+}
 
     function closePlayerModal() {
       document.getElementById('playerModal').classList.remove('active');
@@ -2162,16 +2181,6 @@ function pushHistory() {
   }
 }
 
-
-(async () => {
-  const ok = await loadPlayersFromServer();
-  if (!ok) {
-    allPlayers = [...defaultPlayers];
-  }
-  renderPlayers(getFilteredPlayers());
-  renderSquadsBoard();
-  loadClanStats();
-})();
 // ===== Простая авторизация (один логин/пароль) =====
 
 // ЗАДАЙ СВОЙ ЛОГИН/ПАРОЛЬ ЗДЕСЬ:
@@ -2229,3 +2238,4 @@ checkAuthOnLoad();
   </script>
 </body>
 </html>
+
