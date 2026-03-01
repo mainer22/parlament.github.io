@@ -701,6 +701,8 @@
 
   </style>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/fabric.js/5.3.0/fabric.min.js" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+  <script src="https://unpkg.com/@supabase/supabase-js@2.48.0/dist/umd/supabase.js"></script>
+
 </head>
 <body>
   <div id="authOverlay" style="
@@ -905,31 +907,31 @@
       <h3 style="margin-bottom: 2rem; color: #fff;">🗺️ Карты</h3>
       <div class="maps-grid">
         <div class="map-card" onclick="openMapModal('Hvoynik', 'Hvoynik.png')">
-          <img src="/maps/Hvoynik.png" alt="Hvoynik">
+          <img src="maps/Hvoynik.png" alt="Hvoynik">
           <div class="map-card-title">Hvoynik</div>
         </div>
         <div class="map-card" onclick="openMapModal('Hvoynik reverse', 'Hvoynik_reverse.png')">
-          <img src="/maps/Hvoynik_reverse.png" alt="Hvoynik reverse">
+          <img src="maps/Hvoynik_reverse.png" alt="Hvoynik reverse">
           <div class="map-card-title">Hvoynik reverse</div>
         </div>
         <div class="map-card" onclick="openMapModal('Berda', 'Berda.png')">
-          <img src="/maps/Berda.png" alt="Berda">
+          <img src="maps/Berda.png" alt="Berda">
           <div class="map-card-title">Berda</div>
         </div>
         <div class="map-card" onclick="openMapModal('Berda reverse', 'Berda_reverse.png')">
-          <img src="/maps/Berda_reverse.png" alt="Berda reverse">
+          <img src="maps/Berda_reverse.png" alt="Berda reverse">
           <div class="map-card-title">Berda reverse</div>
         </div>
         <div class="map-card" onclick="openMapModal('Nizina', 'Nizina.png')">
-          <img src="/maps/Nizina.png" alt="Nizina">
+          <img src="maps/Nizina.png" alt="Nizina">
           <div class="map-card-title">Nizina</div>
         </div>
         <div class="map-card" onclick="openMapModal('Nizina reverse', 'Nizina_reverse.png')">
-          <img src="/maps/Nizina_reverse.png" alt="Nizina reverse">
+          <img src="maps/Nizina_reverse.png" alt="Nizina reverse">
           <div class="map-card-title">Nizina reverse</div>
         </div>
         <div class="map-card" onclick="openMapModal('Zaton', 'Zaton.png')">
-          <img src="/maps/Zaton.png" alt="Zaton">
+          <img src="maps/Zaton.png" alt="Zaton">
           <div class="map-card-title">Zaton</div>
         </div>
       </div>
@@ -1037,104 +1039,90 @@
 
 
     </div>
-  </div>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/fabric.js/5.3.0/fabric.min.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-
-<script>
-  // Инициализация Supabase
-  const SUPABASE_URL = 'https://slwjvzsylgnqmhpxjcqa.supabase.co'; // ЗАМЕНИТЕ на свой URL
-  const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InNsd2p2enN5bGducW1ocHhqY3FhIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzIyODM1NTgsImV4cCI6MjA4Nzg1OTU1OH0.SWsUyG-TERNsGr8s6lCWFQkG5aJEU7WMFnDNbVF10x0'; // ЗАМЕНИТЕ на свой ключ
-  const supabase = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
-
-  // Функция загрузки данных из БД
-  async function loadPlayersFromDB() {
-    try {
-      const { data, error } = await supabase
-        .from('players')
-        .select('*')
-        .order('name');
-      
-      if (error) throw error;
-      
-      if (data && data.length > 0) {
-        allPlayers = data;
-        return true;
-      }
-      return false;
-    } catch (e) {
-      console.error('Ошибка загрузки из БД:', e);
-      return false;
-    }
-  }
-
-  // Функция сохранения данных в БД
-  async function savePlayersToDB() {
-    try {
-      // Очищаем таблицу
-      const { error: deleteError } = await supabase
-        .from('players')
-        .delete()
-        .neq('id', 0);
-      
-      if (deleteError) throw deleteError;
-      
-      // Вставляем новые данные
-      if (allPlayers.length > 0) {
-        const { error: insertError } = await supabase
-          .from('players')
-          .insert(allPlayers);
-        
-        if (insertError) throw insertError;
-      }
-      
-      console.log('✅ Данные сохранены в Supabase');
-    } catch (e) {
-      console.error('❌ Ошибка сохранения:', e);
-    }
-  }
-
-  // Вспомогательная функция для синхронизации
-  async function syncWithDB() {
-    const loaded = await loadPlayersFromDB();
-    if (!loaded) {
-      // Если БД пуста, создаем тестового игрока
-      allPlayers = [{
+  <script>
+    const defaultPlayers = [
+      {
         id: 1,
-        name: 'Тестовый игрок',
-        rank: 'Боец',
+        name: 'Player1',
+        rank: 'Лидер',
         squad: '1',
         gear: {
-          weapon: '-',
-          secondary: '-',
-          armor: '-',
+          weapon: 'AK-74',
+          secondary: 'Makarov',
+          armor: 'Beryl',
+          armor2: 'Exolight',
+          build1: 'Сборка 1',
+          build2: 'Сборка 2'
+        },
+        builds: {
+          build1Url: '',
+          build2Url: ''
+        },
+        stats: 'Главный командир, основной штурмовик.'
+      },
+      {
+        id: 2,
+        name: 'Player2',
+        rank: 'Боец',
+        squad: '2',
+        gear: {
+          weapon: 'Groza',
+          secondary: 'P226',
+          armor: 'Стальной',
           armor2: '-',
-          build1: '-',
+          build1: 'Радиация',
           build2: '-'
         },
         builds: {
           build1Url: '',
           build2Url: ''
         },
-        stats: 'Тестовый игрок для начала работы'
-      }];
-      await savePlayersToDB();
-    }
-    renderPlayers(getFilteredPlayers());
-    renderSquadsBoard();
-    loadClanStats();
-  }
+        stats: 'Боец поддержки, бегает по квестам.'
+      }
+    ];
+  const SUPABASE_URL = 'https://slwjvzsylgnqmhpxjcqa.supabase.co';          // свой URL из проекта
+  const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InNsd2p2enN5bGducW1ocHhqY3FhIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzIyODM1NTgsImV4cCI6MjA4Nzg1OTU1OH0.SWsUyG-TERNsGr8s6lCWFQkG5aJEU7WMFnDNbVF10x0'; // anon key
 
-  // Запускаем синхронизацию при загрузке страницы
-  syncWithDB();
-</script>
-  <script>
-
-    let allPlayers = [];
+  const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+    let allPlayers = [...defaultPlayers];
     let currentSquad = 'all';
     let canEdit = true;
     let editingPlayerId = null;
-    
+
+async function savePlayersToServer() {
+  try {
+    // чистим таблицу
+    const { error: delErr } = await supabaseClient
+      .from('players')
+      .delete()
+      .neq('id', 0);
+    if (delErr) {
+      console.error('Supabase delete error', delErr);
+      return;
+    }
+
+    // вставляем всё заново
+    const payload = allPlayers.map(p => ({
+      id: p.id,          // можно убрать и дать Supabase сам генерить
+      name: p.name,
+      rank: p.rank,
+      squad: p.squad,
+      gear: p.gear,
+      builds: p.builds,
+      stats: p.stats
+    }));
+
+    const { error: insErr } = await supabaseClient
+      .from('players')
+      .insert(payload);
+
+    if (insErr) {
+      console.error('Supabase insert error', insErr);
+    }
+  } catch (e) {
+    console.error('Ошибка Supabase savePlayersToServer', e);
+  }
+}
 document.querySelectorAll('.tab-btn').forEach(btn => {
   btn.onclick = function() {
     const tabName = this.dataset.tab;
@@ -1517,29 +1505,35 @@ function saveSquadsNotes() {
     }
 
     function savePlayerFromModal() {
-  // ... проверки ...
       if (!canEdit) return;
-    
-          const name = document.getElementById('modalName').value.trim() || 'Безымянный';
-          const rank = document.getElementById('modalRank').value;
-          const squad = document.getElementById('modalSquad').value;
-          const weapon = document.getElementById('modalWeapon').value.trim() || '-';
-          const secondary = document.getElementById('modalSecondary').value.trim() || '-';
-          const armor = document.getElementById('modalArmor').value.trim() || '-';
-          const armor2 = document.getElementById('modalArmor2').value.trim() || '-';
-          const build1 = document.getElementById('modalBuild1').value.trim() || '-';
-          const build2 = document.getElementById('modalBuild2').value.trim() || '-';
-          const build1Url = document.getElementById('modalBuild1Url').value.trim();
-          const build2Url = document.getElementById('modalBuild2Url').value.trim();
-          const stats = document.getElementById('modalStats').value.trim();
-    
-          if (squad !== 'reserve_out') {
-            const countInSquad = allPlayers.filter(p => p.squad === squad && p.id !== editingPlayerId).length;
-            if (countInSquad >= 6) {
-              alert('В этом отряде уже 6 игроков. Удали кого-то или выбери другой отряд.');
-              return;
-            }
-          }
+
+      const name = document.getElementById('modalName').value.trim() || 'Безымянный';
+      const rank = document.getElementById('modalRank').value;
+      const squad = document.getElementById('modalSquad').value;
+      const weapon = document.getElementById('modalWeapon').value.trim() || '-';
+      const secondary = document.getElementById('modalSecondary').value.trim() || '-';
+      const armor = document.getElementById('modalArmor').value.trim() || '-';
+      const armor2 = document.getElementById('modalArmor2').value.trim() || '-';
+      const build1 = document.getElementById('modalBuild1').value.trim() || '-';
+      const build2 = document.getElementById('modalBuild2').value.trim() || '-';
+      const build1Url = document.getElementById('modalBuild1Url').value.trim();
+      const build2Url = document.getElementById('modalBuild2Url').value.trim();
+      const stats = document.getElementById('modalStats').value.trim();
+
+      if (squad !== 'reserve_out') {
+        const countInSquad = allPlayers.filter(p => p.squad === squad && p.id !== editingPlayerId).length;
+        if (countInSquad >= 6) {
+          alert('В этом отряде уже 6 игроков. Удали кого-то или выбери другой отряд.');
+          return;
+        }
+      }
+
+      const isNew = (editingPlayerId === null);
+      if (isNew && allPlayers.length >= 40) {
+        alert('Достигнут общий лимит 40 игроков.');
+        return;
+      }
+
       if (editingPlayerId === null) {
         const newId = allPlayers.length ? Math.max(...allPlayers.map(p => p.id)) + 1 : 1;
         allPlayers.push({
@@ -1562,28 +1556,21 @@ function saveSquadsNotes() {
           player.stats = stats;
         }
       }
-    
-      // СНАЧАЛА сохраняем в БД
-      savePlayersToDB().then(() => {
-        // ПОТОМ обновляем интерфейс
-        renderPlayers(getFilteredPlayers());
-        closePlayerModal();
-  });
-}
-    function deletePlayerFromModal()  {
+
+      renderPlayers(getFilteredPlayers());
+      savePlayersToServer();
+      closePlayerModal();
+    }
+
+    function deletePlayerFromModal() {
       if (!canEdit || editingPlayerId === null) return;
       const ok = confirm('Удалить этого игрока?');
       if (!ok) return;
-      
       allPlayers = allPlayers.filter(p => p.id !== editingPlayerId);
-      
-      // СНАЧАЛА сохраняем в БД
-      savePlayersToDB().then(() => {
-        // ПОТОМ обновляем интерфейс
-        renderPlayers(getFilteredPlayers());
-        closePlayerModal();
-      });
-}
+      renderPlayers(getFilteredPlayers());
+      savePlayersToServer();
+      closePlayerModal();
+    }
 
     function closePlayerModal() {
       document.getElementById('playerModal').classList.remove('active');
@@ -1928,7 +1915,7 @@ function closeMapModal() {
 
     function loadMapBackground(fileName) {
       if (!mapCanvas) return;
-      const url = '/maps/' + fileName;
+      const url = 'maps/' + fileName;
 
       fabric.Image.fromURL(url, (img) => {
         currentMapImage = img;
@@ -2181,6 +2168,47 @@ function pushHistory() {
   }
 }
 
+async function loadPlayersFromServer() {
+  try {
+    const { data, error } = await supabaseClient
+      .from('players')
+      .select('*')
+      .order('id', { ascending: true });
+
+    if (error) {
+      console.error('Supabase load error', error);
+      return false;
+    }
+
+    if (Array.isArray(data) && data.length > 0) {
+      allPlayers = data.map(row => ({
+        id: row.id,
+        name: row.name,
+        rank: row.rank,
+        squad: row.squad,
+        gear: row.gear,
+        builds: row.builds,
+        stats: row.stats || ''
+      }));
+      return true;
+    }
+
+    return false;
+  } catch (e) {
+    console.error('Ошибка Supabase loadPlayersFromServer', e);
+    return false;
+  }
+}
+
+(async () => {
+  const ok = await loadPlayersFromServer();
+  if (!ok) {
+    allPlayers = [...defaultPlayers];
+  }
+  renderPlayers(getFilteredPlayers());
+  renderSquadsBoard();
+  loadClanStats();
+})();
 // ===== Простая авторизация (один логин/пароль) =====
 
 // ЗАДАЙ СВОЙ ЛОГИН/ПАРОЛЬ ЗДЕСЬ:
@@ -2238,5 +2266,3 @@ checkAuthOnLoad();
   </script>
 </body>
 </html>
-
-
