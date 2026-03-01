@@ -2109,12 +2109,10 @@ function initShapeDrawingLogic() {
       const b = Number(m[3]).toString(16).padStart(2, '0');
       return `#${r}${g}${b}`;
     }
+// ===== Статистика клана (Supabase) =====
 
-    // ===== Статистика клана (ручной ввод + localStorage) =====
-
-const CLAN_STATS_KEY = 'clan_stats_v1';
-
-function loadClanStats() {
+async function loadClanStats() {
+  // значения по умолчанию
   let stats = {
     shellsDay: '0',
     shellsWeek: '0',
@@ -2125,13 +2123,26 @@ function loadClanStats() {
   };
 
   try {
-    const saved = localStorage.getItem(CLAN_STATS_KEY);
-    if (saved) {
-      const parsed = JSON.parse(saved);
-      stats = { ...stats, ...parsed };
+    const { data, error } = await supabaseClient
+      .from('statitstiks')
+      .select('*')
+      .eq('id', 1)
+      .single();
+
+    if (error) {
+      console.error('Supabase clan_stats load error', error);
+    } else if (data) {
+      stats = {
+        shellsDay: data.shells_day ?? '0',
+        shellsWeek: data.shells_week ?? '0',
+        ratingPlusDay: data.rating_plus_day ?? '0',
+        ratingPlusWeek: data.rating_plus_week ?? '0',
+        ratingMinusDay: data.rating_minus_day ?? '0',
+        ratingMinusWeek: data.rating_minus_week ?? '0'
+      };
     }
   } catch (e) {
-    console.error('Ошибка чтения clan_stats из localStorage', e);
+    console.error('Ошибка загрузки clan_stats из Supabase', e);
   }
 
   const mapIds = {
@@ -2158,7 +2169,7 @@ function loadClanStats() {
   });
 }
 
-function saveClanStats() {
+async function saveClanStats() {
   const stats = {
     shellsDay: (document.getElementById('stat-shells-day')?.textContent || '0').trim(),
     shellsWeek: (document.getElementById('stat-shells-week')?.textContent || '0').trim(),
@@ -2169,9 +2180,23 @@ function saveClanStats() {
   };
 
   try {
-    localStorage.setItem(CLAN_STATS_KEY, JSON.stringify(stats));
+    const { error } = await supabaseClient
+      .from('statitstiks')
+      .upsert({
+        id: 1,
+        shells_day: stats.shellsDay,
+        shells_week: stats.shellsWeek,
+        rating_plus_day: stats.ratingPlusDay,
+        rating_plus_week: stats.ratingPlusWeek,
+        rating_minus_day: stats.ratingMinusDay,
+        rating_minus_week: stats.ratingMinusWeek
+      });
+
+    if (error) {
+      console.error('Supabase clan_stats save error', error);
+    }
   } catch (e) {
-    console.error('Ошибка сохранения clan_stats в localStorage', e);
+    console.error('Ошибка сохранения clan_stats в Supabase', e);
   }
 }
 function pushHistory() {
