@@ -701,6 +701,8 @@
 
   </style>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/fabric.js/5.3.0/fabric.min.js" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+  <script src="https://unpkg.com/@supabase/supabase-js@2.48.0/dist/umd/supabase.js"></script>
+
 </head>
 <body>
   <div id="authOverlay" style="
@@ -905,31 +907,31 @@
       <h3 style="margin-bottom: 2rem; color: #fff;">🗺️ Карты</h3>
       <div class="maps-grid">
         <div class="map-card" onclick="openMapModal('Hvoynik', 'Hvoynik.png')">
-          <img src="/maps/Hvoynik.png" alt="Hvoynik">
+          <img src="maps/Hvoynik.png" alt="Hvoynik">
           <div class="map-card-title">Hvoynik</div>
         </div>
         <div class="map-card" onclick="openMapModal('Hvoynik reverse', 'Hvoynik_reverse.png')">
-          <img src="/maps/Hvoynik_reverse.png" alt="Hvoynik reverse">
+          <img src="maps/Hvoynik_reverse.png" alt="Hvoynik reverse">
           <div class="map-card-title">Hvoynik reverse</div>
         </div>
         <div class="map-card" onclick="openMapModal('Berda', 'Berda.png')">
-          <img src="/maps/Berda.png" alt="Berda">
+          <img src="maps/Berda.png" alt="Berda">
           <div class="map-card-title">Berda</div>
         </div>
         <div class="map-card" onclick="openMapModal('Berda reverse', 'Berda_reverse.png')">
-          <img src="/maps/Berda_reverse.png" alt="Berda reverse">
+          <img src="maps/Berda_reverse.png" alt="Berda reverse">
           <div class="map-card-title">Berda reverse</div>
         </div>
         <div class="map-card" onclick="openMapModal('Nizina', 'Nizina.png')">
-          <img src="/maps/Nizina.png" alt="Nizina">
+          <img src="maps/Nizina.png" alt="Nizina">
           <div class="map-card-title">Nizina</div>
         </div>
         <div class="map-card" onclick="openMapModal('Nizina reverse', 'Nizina_reverse.png')">
-          <img src="/maps/Nizina_reverse.png" alt="Nizina reverse">
+          <img src="maps/Nizina_reverse.png" alt="Nizina reverse">
           <div class="map-card-title">Nizina reverse</div>
         </div>
         <div class="map-card" onclick="openMapModal('Zaton', 'Zaton.png')">
-          <img src="/maps/Zaton.png" alt="Zaton">
+          <img src="maps/Zaton.png" alt="Zaton">
           <div class="map-card-title">Zaton</div>
         </div>
       </div>
@@ -1037,8 +1039,6 @@
 
 
     </div>
-  </div>
-
   <script>
     const defaultPlayers = [
       {
@@ -1080,43 +1080,49 @@
         stats: 'Боец поддержки, бегает по квестам.'
       }
     ];
+  const SUPABASE_URL = 'https://slwjvzsylgnqmhpxjcqa.supabase.co';          // свой URL из проекта
+  const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InNsd2p2enN5bGducW1ocHhqY3FhIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzIyODM1NTgsImV4cCI6MjA4Nzg1OTU1OH0.SWsUyG-TERNsGr8s6lCWFQkG5aJEU7WMFnDNbVF10x0'; // anon key
 
+  const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
     let allPlayers = [...defaultPlayers];
     let currentSquad = 'all';
     let canEdit = true;
     let editingPlayerId = null;
 
-    async function loadPlayersFromServer() {
-      try {
-        const res = await fetch('/api/players');
-        if (!res.ok) throw new Error('HTTP ' + res.status);
-        const data = await res.json();
-        if (Array.isArray(data) && data.length > 0) {
-          allPlayers = data;
-          return true;
-        }
-        return false;
-      } catch (e) {
-        console.error('Ошибка загрузки /api/players', e);
-        return false;
-      }
+async function savePlayersToServer() {
+  try {
+    // чистим таблицу
+    const { error: delErr } = await supabaseClient
+      .from('players')
+      .delete()
+      .neq('id', 0);
+    if (delErr) {
+      console.error('Supabase delete error', delErr);
+      return;
     }
 
-    async function savePlayersToServer() {
-      try {
-        const res = await fetch('/api/players', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify(allPlayers)
-        });
-        if (!res.ok) {
-          console.error('Сервер вернул ошибку при сохранении', res.status);
-        }
-      } catch (e) {
-        console.error('Ошибка сохранения /api/players', e);
-      }
-    }
+    // вставляем всё заново
+    const payload = allPlayers.map(p => ({
+      id: p.id,          // можно убрать и дать Supabase сам генерить
+      name: p.name,
+      rank: p.rank,
+      squad: p.squad,
+      gear: p.gear,
+      builds: p.builds,
+      stats: p.stats
+    }));
 
+    const { error: insErr } = await supabaseClient
+      .from('players')
+      .insert(payload);
+
+    if (insErr) {
+      console.error('Supabase insert error', insErr);
+    }
+  } catch (e) {
+    console.error('Ошибка Supabase savePlayersToServer', e);
+  }
+}
 document.querySelectorAll('.tab-btn').forEach(btn => {
   btn.onclick = function() {
     const tabName = this.dataset.tab;
@@ -1909,7 +1915,7 @@ function closeMapModal() {
 
     function loadMapBackground(fileName) {
       if (!mapCanvas) return;
-      const url = '/maps/' + fileName;
+      const url = 'maps/' + fileName;
 
       fabric.Image.fromURL(url, (img) => {
         currentMapImage = img;
@@ -2162,6 +2168,37 @@ function pushHistory() {
   }
 }
 
+async function loadPlayersFromServer() {
+  try {
+    const { data, error } = await supabaseClient
+      .from('players')
+      .select('*')
+      .order('id', { ascending: true });
+
+    if (error) {
+      console.error('Supabase load error', error);
+      return false;
+    }
+
+    if (Array.isArray(data) && data.length > 0) {
+      allPlayers = data.map(row => ({
+        id: row.id,
+        name: row.name,
+        rank: row.rank,
+        squad: row.squad,
+        gear: row.gear,
+        builds: row.builds,
+        stats: row.stats || ''
+      }));
+      return true;
+    }
+
+    return false;
+  } catch (e) {
+    console.error('Ошибка Supabase loadPlayersFromServer', e);
+    return false;
+  }
+}
 
 (async () => {
   const ok = await loadPlayersFromServer();
