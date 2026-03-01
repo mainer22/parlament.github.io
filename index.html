@@ -1081,9 +1081,9 @@
       }
     ];
   const SUPABASE_URL = 'https://slwjvzsylgnqmhpxjcqa.supabase.co';          // свой URL из проекта
-  const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InNsd2p2enN5bGducW1ocHhqY3FhIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzIyODM1NTgsImV4cCI6MjA4Nzg1OTU1OH0.SWsUyG-TERNsGr8s6lCWFQkG5aJEU7WMFnDNbVF10x0'; // anon key
+  const SUPABASE_PUBLISHABLE_KEY = 'sb_publishable_E_43B3FZE7vx7NpcQelC0w_AsGvDgqG'; // публишабл
 
-  const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+  const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_PUBLISHABLE_KEY);
     let allPlayers = [...defaultPlayers];
     let currentSquad = 'all';
     let canEdit = true;
@@ -1126,6 +1126,8 @@ async function savePlayersToServer() {
 document.querySelectorAll('.tab-btn').forEach(btn => {
   btn.onclick = function() {
     const tabName = this.dataset.tab;
+        // запоминаем активный таб
+    localStorage.setItem('clan_portal_active_tab', tabName);
     document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
     document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
     document.getElementById(tabName).classList.add('active');
@@ -1138,6 +1140,26 @@ document.querySelectorAll('.tab-btn').forEach(btn => {
     }
   };
 });
+// восстановление последнего открытого таба
+(function restoreLastTab() {
+  const saved = localStorage.getItem('clan_portal_active_tab');
+  const tabName = saved || 'squad'; // по умолчанию "Состав"
+  const btn = document.querySelector(`.tab-btn[data-tab="${tabName}"]`);
+  const content = document.getElementById(tabName);
+
+  if (btn && content) {
+    document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+    document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+    content.classList.add('active');
+    btn.classList.add('active');
+
+    if (tabName === 'squad') {
+      renderPlayers(getFilteredPlayers());
+    } else if (tabName === 'squads') {
+      renderSquadsBoard();
+    }
+  }
+})();
 
 
     function rankOrder(rank) {
