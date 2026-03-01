@@ -1662,12 +1662,23 @@ window.addEventListener('keydown', (e) => {
   if (e.key.toLowerCase() === 'z' && (e.ctrlKey || e.metaKey)) {
     e.preventDefault();
     if (historyStack.length < 2) return;
+
     historyStack.pop();
     const prev = historyStack[historyStack.length - 1];
     if (!prev) return;
+
+    // запоминаем текущий фон
+    const bgImage = currentMapImage;
+
     isRestoringHistory = true;
     mapCanvas.loadFromJSON(prev, () => {
-      mapCanvas.renderAll();
+      // возвращаем фон, если он был
+      if (bgImage) {
+        mapCanvas.setBackgroundImage(bgImage, mapCanvas.renderAll.bind(mapCanvas));
+        currentMapImage = bgImage;
+      } else {
+        mapCanvas.renderAll();
+      }
       isRestoringHistory = false;
     });
   }
@@ -1868,18 +1879,22 @@ function openMapModal(name, fileName) {
     loadMapBackground(fileName);
 
     // попытка загрузить сохранённый JSON для этой карты
-    const saved = localStorage.getItem('map_canvas_' + currentMapFileName);
-    if (saved) {
-      try {
-        mapCanvas.loadFromJSON(saved, () => {
-          mapCanvas.renderAll();
-          pushHistory();
-        });
-      } catch (e) {
-        console.error('Ошибка загрузки сохранённой карты', e);
-      }
-    }
+const saved = localStorage.getItem('map_canvas_' + currentMapFileName);
+if (saved) {
+  try {
+    mapCanvas.loadFromJSON(saved, () => {
+      mapCanvas.renderAll();
 
+      // пишем в историю только если реально есть объекты поверх карты
+      const objs = mapCanvas.getObjects().filter(o => o !== currentMapImage);
+      if (objs.length > 0) {
+        pushHistory();
+      }
+    });
+  } catch (e) {
+    console.error('Ошибка загрузки сохранённой карты', e);
+  }
+}
     initShapeDrawingLogic();
     setTool('select');
   }, 50);
