@@ -328,6 +328,19 @@
   gap: 0;
   height: calc(100% - 44px); /* минус заголовок */
 }
+/* Акценты для модалки статистики игрока */
+#playerStatsModal .map-modal {
+  max-width: 900px;
+  width: 96vw;
+}
+
+#playerStatsContent > div {
+  background: radial-gradient(circle at top left, rgba(78,205,196,0.12), rgba(0,0,0,0.85));
+  border-radius: 14px;
+  border: 1px solid rgba(255,255,255,0.12);
+  padding: 1rem 1.2rem;
+  margin-bottom: 1rem;
+}
 
 .map-canvas-wrap {
   flex: 1;
@@ -489,6 +502,12 @@
   gap: 1.2rem;
   margin-bottom: 1.5rem;      /* отступ снизу, чтобы extra не прилипала */
 }
+/*сетка статов по отрядам*/
+.stats-squads-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(320px, 1fr));
+  gap: 1.5rem;
+}
 
 /* нижний блок Замена + Заметки */
 .squads-extra {
@@ -588,6 +607,20 @@
   transform: translateY(-1px);
   box-shadow: 0 0 10px rgba(78,205,196,0.6);
 }
+.stats-btn {
+  margin-left: 0.5rem;
+  padding: 0.15rem 0.6rem;
+  border-radius: 999px;
+  border: 1px solid rgba(78,205,196,0.8);
+  background: rgba(0,0,0,0.7);
+  color: #4ecdc4;
+  font-size: 0.75rem;
+  cursor: pointer;
+}
+.stats-btn:hover {
+  background: rgba(78,205,196,0.2);
+}
+
 
     @media (max-width: 768px) { 
       .players-grid { grid-template-columns: 1fr; } 
@@ -702,6 +735,10 @@
   </style>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/fabric.js/5.3.0/fabric.min.js" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
   <script src="https://unpkg.com/@supabase/supabase-js@2.48.0/dist/umd/supabase.js"></script>
+  <script src="https://unpkg.com/@supabase/supabase-js@2.49.1/dist/umd/supabase.js"></script>
+  <script>
+
+</script>
 
 </head>
 <body>
@@ -788,15 +825,22 @@
       <div style="font-size:1.2rem; opacity:0.9; margin-bottom:1.5rem;">Лидер: <strong>Roter_Morder</strong></div>
       <div class="clan-stats">
         <div class="stat-item"><div class="stat-value" id="clanPlayersCount">0</div><div class="stat-label">Игроков</div></div>
-        <div class="stat-item"><div class="stat-value">#242</div><div class="stat-label">Рейтинг</div></div>
-        <div class="stat-item"><div class="stat-value">D</div><div class="stat-label">Ранг</div></div>
+<div class="stat-item">
+  <div class="stat-value" id="clanRatingDisplay">1353</div>
+  <div class="stat-label">Рейтинг</div>
+</div>
+<div class="stat-item">
+  <div class="stat-value" id="clanRankDisplay">D</div>
+  <div class="stat-label">Ранг</div>
+</div>
+
       </div>
     </div>
 
 <div class="tab-buttons">
   <button class="tab-btn active" data-tab="squad">👥 Состав</button>
   <button class="tab-btn" data-tab="squads">🏷️ Отряды</button>
-  <button class="tab-btn" data-tab="grenades">💣 Гранаты</button>
+  <button class="tab-btn" data-tab="grenades">🙉 Статистика игроков</button>
   <button class="tab-btn" data-tab="maps">🗺️ Карты</button>
   <button class="tab-btn" data-tab="stats">📊 Статистика</button>
   <button class="tab-btn" data-tab="history">📈 История</button>
@@ -890,18 +934,39 @@
     </div>
 
     <div id="grenades" class="glass-card tab-content">
-      <div style="min-height:320px; display:flex; align-items:center; justify-content:center;">
-        <div style="padding:2.5rem 3rem; border-radius:24px; border:2px dashed rgba(255,80,80,0.7); background:rgba(10,10,10,0.85); backdrop-filter:blur(22px); box-shadow:0 18px 50px rgba(0,0,0,0.8); text-align:center;">
-          <div style="font-size:1.8rem; color:#ff6868; margin-bottom:0.75rem; letter-spacing:1px;">
-            В РАЗРАБОТКЕ
-          </div>
-          <div style="font-size:0.95rem; opacity:0.8; max-width:420px;">
-            Раздел статистики по гранатам находится в разработке.
-            Скоро здесь появятся таблицы и графики по этапам и неделям.
-          </div>
-        </div>
-      </div>
+  <h3 style="margin-bottom: 1.5rem; color: #fff;">📈 Статистика игроков</h3>
+  <div class="stats-squads-grid">
+    <div class="squad-column">
+      <div class="squad-column-title">1 отряд</div>
+      <div class="squad-column-body" id="stats-col-1"></div>
     </div>
+    <div class="squad-column">
+      <div class="squad-column-title">2 отряд</div>
+      <div class="squad-column-body" id="stats-col-2"></div>
+    </div>
+    <div class="squad-column">
+      <div class="squad-column-title">3 отряд</div>
+      <div class="squad-column-body" id="stats-col-3"></div>
+    </div>
+    <div class="squad-column">
+      <div class="squad-column-title">4 отряд</div>
+      <div class="squad-column-body" id="stats-col-4"></div>
+    </div>
+    <div class="squad-column">
+      <div class="squad-column-title">5 отряд</div>
+      <div class="squad-column-body" id="stats-col-5"></div>
+    </div>
+    <div class="squad-column">
+      <div class="squad-column-title">Ралик</div>
+      <div class="squad-column-body" id="stats-col-ralik"></div>
+    </div>
+    <div class="squad-column">
+      <div class="squad-column-title">Замена</div>
+      <div class="squad-column-body" id="stats-col-reserve-out"></div>
+    </div>
+  </div>
+</div>
+
 
     <div id="maps" class="glass-card tab-content">
       <h3 style="margin-bottom: 2rem; color: #fff;">🗺️ Карты</h3>
@@ -1088,6 +1153,25 @@
     let currentSquad = 'all';
     let canEdit = true;
     let editingPlayerId = null;
+async function getStalcraftTokenViaEdge() {
+  try {
+    const { data, error } = await supabaseClient.functions.invoke(
+      "stalcraft-token",
+      { method: "POST" }
+    );
+
+    if (error) {
+      console.error("stalcraft-token error", error);
+      return null;
+    }
+
+    console.log("stalcraft token data", data);
+    return data.access_token;
+  } catch (e) {
+    console.error("stalcraft-token invoke failed", e);
+    return null;
+  }
+}
 
 async function savePlayersToServer() {
   try {
@@ -1278,7 +1362,7 @@ document.querySelectorAll('.tab-btn').forEach(btn => {
       enableBuildPreviews();
     }
 function renderSquadsBoard() {
-  const map = {
+  const mapMain = {
     1: document.getElementById('squad-col-1'),
     2: document.getElementById('squad-col-2'),
     3: document.getElementById('squad-col-3'),
@@ -1286,10 +1370,25 @@ function renderSquadsBoard() {
     5: document.getElementById('squad-col-5'),
     ralik: document.getElementById('squad-col-ralik'),
     reserve: document.getElementById('squad-col-reserve-out'),
-    reserveout: document.getElementById('squad-col-reserve-out')
+    reserve_out: document.getElementById('squad-col-reserve-out')
   };
 
-  Object.values(map).forEach(col => {
+  const mapStats = {
+    1: document.getElementById('stats-col-1'),
+    2: document.getElementById('stats-col-2'),
+    3: document.getElementById('stats-col-3'),
+    4: document.getElementById('stats-col-4'),
+    5: document.getElementById('stats-col-5'),
+    ralik: document.getElementById('stats-col-ralik'),
+    reserve: document.getElementById('stats-col-reserve-out'),
+    reserve_out: document.getElementById('stats-col-reserve-out')
+  };
+
+  // чистим обе карты
+  Object.values(mapMain).forEach(col => {
+    if (col) col.innerHTML = '';
+  });
+  Object.values(mapStats).forEach(col => {
     if (col) col.innerHTML = '';
   });
 
@@ -1301,41 +1400,157 @@ function renderSquadsBoard() {
   });
 
   Object.keys(bySquad).forEach(s => {
-    const col = map[s];
-    if (!col) return;
+    const colMain = mapMain[s];
+    const colStats = mapStats[s];
+    if (!colMain && !colStats) return;
+
     const list = bySquad[s].sort((a, b) => a.name.localeCompare(b.name));
+
     list.forEach(p => {
-      const div = document.createElement('div');
-      div.className = 'squad-pill';
-      div.textContent = p.name;
-      div.dataset.playerId = String(p.id);
+      // Пилюля для вкладки "Отряды"
+      if (colMain) {
+        const div = document.createElement('div');
+        div.className = 'squad-pill';
+        div.textContent = p.name;
+        div.dataset.playerId = String(p.id);
 
-      div.onclick = () => {
-        const player = allPlayers.find(x => x.id === p.id);
-        if (!player) return;
+        div.onclick = () => {
+          const player = allPlayers.find(x => x.id === p.id);
+          if (!player) return;
 
-        // включаем вкладку "Состав"
-        document.querySelectorAll('.tab-btn').forEach(b => {
-          b.classList.toggle('active', b.dataset.tab === 'squad');
-        });
-        document.querySelectorAll('.tab-content').forEach(c => {
-          c.classList.toggle('active', c.id === 'squad');
-        });
+          // включаем вкладку "Состав"
+          document.querySelectorAll('.tab-btn').forEach(b => {
+            b.classList.toggle('active', b.dataset.tab === 'squad');
+          });
+          document.querySelectorAll('.tab-content').forEach(c => {
+            c.classList.toggle('active', c.id === 'squad');
+          });
 
-        // перерендер и открытие модалки
-        renderPlayers(getFilteredPlayers());
-        openPlayerModal(player);
-      };
+          // перерендер и открытие модалки
+          renderPlayers(getFilteredPlayers());
+          openPlayerModal(player);
+        };
 
-      col.appendChild(div);
+        colMain.appendChild(div);
+      }
+
+      // Пилюля для вкладки "Статистика игроков"
+      if (colStats) {
+        const div = document.createElement('div');
+        div.className = 'squad-pill';
+        div.dataset.playerId = String(p.id);
+
+        div.innerHTML = `
+          <span style="margin-right:0.5rem;">${p.name}</span>
+          <button class="stats-btn" data-player-id="${p.id}">Статистика</button>
+        `;
+
+        colStats.appendChild(div);
+      }
+    });
+  });
+
+  // навешиваем обработчики на кнопки "Статистика"
+  document.querySelectorAll('.stats-btn').forEach(btn => {
+    btn.addEventListener('click', (e) => {
+      e.stopPropagation();
+      const id = Number(btn.dataset.playerId);
+      const player = allPlayers.find(x => x.id === id);
+      if (!player) return;
+      openPlayerStats(player);
     });
   });
 
   loadSquadsNotes();
 }
-
-
 // ===== Заметки по отрядам (localStorage) =====
+async function openPlayerStats(player) {
+  const backdrop = document.getElementById('playerStatsModal');
+  const nameEl = document.getElementById('playerStatsName');
+  const contentEl = document.getElementById('playerStatsContent');
+
+  nameEl.textContent = player.name;
+
+  // тянем статистику по игроку из таблицы players по name
+  let gren_Stage1 = 0;
+  let gren_Stage2 = 0;
+  let gren_Stage3 = 0;
+  let gren_Day1 = 0;
+  let gren_Day2 = 0;
+  let gren_Day3 = 0;
+  let gren_Week = 0;
+
+  const { data, error } = await supabaseClient
+    .from('players')
+    .select('gren_stage1, gren_stage2, gren_stage3, gren_day1, gren_day2, gren_day3, gren_week')
+    .eq('name', player.name)
+    .maybeSingle();
+
+    console.log('stats query', player.name, { data, error });
+
+  if (!error && data) {
+    grenStage1 = Number(data.gren_stage1 ?? 0);
+    grenStage2 = Number(data.gren_stage2 ?? 0);
+    grenStage3 = Number(data.gren_stage3 ?? 0);
+    grenDay1 = Number(data.gren_day1 ?? 0);
+    grenDay2 = Number(data.gren_day2 ?? 0);
+    grenDay3 = Number(data.gren_day3 ?? 0);
+    grenWeek = Number(data.gren_week ?? 0);
+  }
+
+  // временно: "за день" показываем сумму трёх дней (всё КВ)
+  const grenDay = grenDay1 + grenDay2 + grenDay3;
+
+  contentEl.innerHTML = `
+    <div>
+      <div style="margin-bottom:0.2rem; font-size:0.95rem; opacity:0.8;">
+        Отряд ${formatSquad(player.squad)} | ${player.rank}
+      </div>
+    </div>
+
+    <div>
+      <div style="font-weight:600; margin-bottom:0.5rem;">Гранаты</div>
+      <div>1 этап: <span id="stat-gren-stage1">${grenStage1}</span></div>
+      <div>2 этап: <span id="stat-gren-stage2">${grenStage2}</span></div>
+      <div>3 этап: <span id="stat-gren-stage3">${grenStage3}</span></div>
+      <div style="margin-top:0.4rem;">За день: <span id="stat-gren-day">${grenDay}</span></div>
+      <div>За неделю: <span id="stat-gren-week">${grenWeek}</span></div>
+    </div>
+
+    <div>
+      <div style="font-weight:600; margin-bottom:0.5rem;">К/Д/А (позже)</div>
+      <div>1 этап: —</div>
+      <div>2 этап: —</div>
+      <div>3 этап: —</div>
+      <div style="margin-top:0.4rem;">За день: —</div>
+      <div>За неделю: —</div>
+    </div>
+
+    <div>
+      <div style="font-weight:600; margin-bottom:0.5rem;">Счёт КВ (позже)</div>
+      <div>1 этап: —</div>
+      <div>2 этап: —</div>
+      <div>3 этап: —</div>
+      <div style="margin-top:0.4rem;">За день: —</div>
+      <div>За неделю: —</div>
+    </div>
+
+    <div>
+      <div style="font-weight:600; margin-bottom:0.5rem;">Рейтинг игрока</div>
+      <div style="font-size:1.4rem;">
+        <span id="stat-player-rating">—</span> / 10.0
+      </div>
+    </div>
+  `;
+
+  backdrop.classList.add('active');
+}
+
+
+
+function closePlayerStats() {
+  document.getElementById('playerStatsModal').classList.remove('active');
+}
 
 const SQUADS_NOTES_KEY = 'clan_squads_notes_v1';
 
@@ -1613,21 +1828,40 @@ function saveSquadsNotes() {
     }
 
     // ===== Рисовалка карт: фотошоп‑стайл =====
-    let mapCanvas = null;
-    let currentTool = 'select';
-    let currentMapImage = null;
+let mapCanvas = null;
+let currentTool = 'select';
+let currentMapImage = null;
+let isDrawingShape = false;
+let shapeStart = null;
+let tempShape = null;
+let isEditingObject = false;
+let currentStrokeColor = '#ff4444';
+let currentStrokeWidth = 3;
 
-    let isDrawingShape = false;
-    let shapeStart = null;
-    let tempShape = null;
-    let isEditingObject = false;
+let historyStack = [];
+let historyLimit = 15;
+let isRestoringHistory = false;
+let redoStack = [];
 
-    let currentStrokeColor = '#ff4444';
-    let currentStrokeWidth = 3;
-    let currentMapFileName = null; // по этому ключу будем сохранять JSON
-    let historyStack = [];
-    let historyLimit = 15;
-    let isRestoringHistory = false;
+function pushHistory() {
+  if (!mapCanvas || isRestoringHistory) return;
+
+  const json = JSON.stringify(mapCanvas.toJSON());
+
+  if (historyStack.length > 0) {
+    const last = historyStack[historyStack.length - 1];
+    if (last === json) return;
+  }
+
+  historyStack.push(json);
+
+  if (historyStack.length > historyLimit) {
+    historyStack.shift();
+  }
+    // любое новое действие обнуляет стек redo
+  redoStack = [];
+}
+
 
 function setActiveToolButton(tool) {
   ['toolSelect','toolBrush','toolRect','toolCircle','toolTriangle','toolText'].forEach(id => {
@@ -1679,22 +1913,31 @@ function initFabricCanvas() {
       deleteSelectedShape();
     }
   });
+
 window.addEventListener('keydown', (e) => {
+  const key = e.key.toLowerCase();
+
   if (!mapCanvas) return;
-  if (e.key.toLowerCase() === 'z' && (e.ctrlKey || e.metaKey)) {
+
+  const isCtrl = e.ctrlKey || e.metaKey;
+  const isZ = key === 'z' || key === 'я';
+
+  // UNDO: Ctrl+Z / Ctrl+Я
+  if (isCtrl && isZ && !e.shiftKey) {
     e.preventDefault();
+
     if (historyStack.length < 2) return;
 
-    historyStack.pop();
+    const current = historyStack.pop();      // текущее состояние в redo
+    redoStack.push(current);
+
     const prev = historyStack[historyStack.length - 1];
     if (!prev) return;
 
-    // запоминаем текущий фон
     const bgImage = currentMapImage;
 
     isRestoringHistory = true;
     mapCanvas.loadFromJSON(prev, () => {
-      // возвращаем фон, если он был
       if (bgImage) {
         mapCanvas.setBackgroundImage(bgImage, mapCanvas.renderAll.bind(mapCanvas));
         currentMapImage = bgImage;
@@ -1703,8 +1946,41 @@ window.addEventListener('keydown', (e) => {
       }
       isRestoringHistory = false;
     });
+
+    return;
+  }
+
+  // REDO: Ctrl+Shift+Z / Ctrl+Shift+Я
+  if (isCtrl && isZ && e.shiftKey) {
+    e.preventDefault();
+
+    if (redoStack.length === 0) return;
+
+    const next = redoStack.pop();   // состояние, в которое переходим
+    if (!next) return;
+
+    historyStack.push(next);        // оно становится текущим
+
+    const bgImage = currentMapImage;
+
+    isRestoringHistory = true;
+    mapCanvas.loadFromJSON(next, () => {
+      if (bgImage) {
+        mapCanvas.setBackgroundImage(bgImage, mapCanvas.renderAll.bind(mapCanvas));
+        currentMapImage = bgImage;
+      } else {
+        mapCanvas.renderAll();
+      }
+      isRestoringHistory = false;
+    });
+
+    return;
   }
 });
+
+
+
+
   // ЗУМ КОЛЁСИКОМ: только приближение, отдаляться ниже 1 нельзя
   mapCanvas.on('mouse:wheel', function(opt) {
     const delta = opt.e.deltaY;
@@ -1729,50 +2005,14 @@ window.addEventListener('keydown', (e) => {
     opt.e.stopPropagation();
   });
 
-  // ПАНОРАМИРОВАНИЕ Shift + LMB в режиме стрелки
-  let isPanning = false;
-  let lastPosX = 0, lastPosY = 0;
 
-  mapCanvas.on('mouse:down', function(opt) {
-    const evt = opt.e;
-    // evt.button === 0 — левый клик, evt.shiftKey — зажат Shift
-    if (currentTool === 'select' && evt.shiftKey && evt.button === 0) {
-      isPanning = true;
-      lastPosX = evt.clientX;
-      lastPosY = evt.clientY;
-      // отключаем выбор объектов, чтобы не мешали панораме
-      mapCanvas.selection = false;
-      mapCanvas.forEachObject(o => o.evented = false);
-    }
-  });
-
-  mapCanvas.on('mouse:move', function(opt) {
-    if (!isPanning) return;
-    const evt = opt.e;
-    const vpt = mapCanvas.viewportTransform;
-    vpt[4] += evt.clientX - lastPosX;
-    vpt[5] += evt.clientY - lastPosY;
-    mapCanvas.requestRenderAll();
-    lastPosX = evt.clientX;
-    lastPosY = evt.clientY;
-  });
-
-  mapCanvas.on('mouse:up', function() {
-    if (!isPanning) return;
-    isPanning = false;
-    // возвращаем интерактивность объектов и режим выбора
-    mapCanvas.forEachObject(o => {
-      if (o === currentMapImage) return;
-      o.evented = true;
-    });
-    mapCanvas.selection = (currentTool === 'select');
-  });
 
   mapCanvas.on('selection:created', syncUIWithSelection);
   mapCanvas.on('selection:updated', syncUIWithSelection);
   mapCanvas.on('selection:cleared', () => {
     isEditingObject = false;
   });
+   pushHistory();
 }
 
 
@@ -1997,13 +2237,29 @@ function deleteSelectedShape() {
 function initShapeDrawingLogic() {
   if (!mapCanvas) return;
 
+  // Сбрасываем старые обработчики
   mapCanvas.off('mouse:down');
   mapCanvas.off('mouse:move');
   mapCanvas.off('mouse:up');
 
+  let isPanning = false;
+  let lastPosX = 0, lastPosY = 0;
+
   mapCanvas.on('mouse:down', function (opt) {
+    const evt = opt.e;
     const target = opt.target;
 
+    // 1) Панорамирование: select + Shift + ЛКМ
+    if (currentTool === 'select' && evt.shiftKey && evt.button === 0) {
+      isPanning = true;
+      lastPosX = evt.clientX;
+      lastPosY = evt.clientY;
+      mapCanvas.selection = false;
+      mapCanvas.forEachObject(o => o.evented = false);
+      return;
+    }
+
+    // 2) Редактирование объекта
     if (isEditingObject) {
       if (!target || target === currentMapImage) {
         mapCanvas.discardActiveObject();
@@ -2013,9 +2269,9 @@ function initShapeDrawingLogic() {
       return;
     }
 
-    const pointer = mapCanvas.getPointer(opt.e);
+    const pointer = mapCanvas.getPointer(evt);
 
-    // инструмент текст
+    // 3) Текст
     if (currentTool === 'text') {
       const text = prompt('Текст:');
       if (!text) return;
@@ -2040,7 +2296,7 @@ function initShapeDrawingLogic() {
       return;
     }
 
-    // фигуры
+    // 4) Фигуры
     if (currentTool === 'rect' || currentTool === 'circle' || currentTool === 'triangle') {
       if (target && target !== currentMapImage) return;
       isDrawingShape = true;
@@ -2079,8 +2335,22 @@ function initShapeDrawingLogic() {
   });
 
   mapCanvas.on('mouse:move', function (opt) {
+    const evt = opt.e;
+
+    // Панорамирование
+    if (isPanning) {
+      const vpt = mapCanvas.viewportTransform;
+      vpt[4] += evt.clientX - lastPosX;
+      vpt[5] += evt.clientY - lastPosY;
+      mapCanvas.requestRenderAll();
+      lastPosX = evt.clientX;
+      lastPosY = evt.clientY;
+      return;
+    }
+
+    // Рисование фигур
     if (!isDrawingShape || !tempShape || !shapeStart) return;
-    const pointer = mapCanvas.getPointer(opt.e);
+    const pointer = mapCanvas.getPointer(evt);
 
     if (currentTool === 'rect' || currentTool === 'triangle') {
       const w = pointer.x - shapeStart.x;
@@ -2106,21 +2376,35 @@ function initShapeDrawingLogic() {
   });
 
   mapCanvas.on('mouse:up', function () {
+    // Завершение панорамирования
+    if (isPanning) {
+      isPanning = false;
+      mapCanvas.forEachObject(o => {
+        if (o === currentMapImage) return;
+        o.evented = true;
+      });
+      mapCanvas.selection = (currentTool === 'select');
+      return;
+    }
+
+    // Завершение фигуры
     if (isDrawingShape && tempShape) {
       tempShape.setCoords();
       mapCanvas.renderAll();
       isDrawingShape = false;
       shapeStart = null;
       tempShape = null;
-      pushHistory();           // фигуры
+      pushHistory();
     } else if (currentTool === 'brush') {
-      pushHistory();           // кисть
+      pushHistory();
     }
   });
-    mapCanvas.on('object:modified', () => {
+
+  mapCanvas.on('object:modified', () => {
     pushHistory();
   });
 }
+
     function rgbaToHex(color) {
       if (!color) return '#ff4444';
       if (color.startsWith('#')) return color;
@@ -2134,7 +2418,6 @@ function initShapeDrawingLogic() {
 // ===== Статистика клана (Supabase) =====
 
 async function loadClanStats() {
-  // значения по умолчанию
   let stats = {
     shellsDay: '0',
     shellsWeek: '0',
@@ -2155,18 +2438,37 @@ async function loadClanStats() {
       console.error('Supabase clan_stats load error', error);
     } else if (data) {
       stats = {
-        shellsDay: data.shells_day ?? '0',
-        shellsWeek: data.shells_week ?? '0',
-        ratingPlusDay: data.rating_plus_day ?? '0',
-        ratingPlusWeek: data.rating_plus_week ?? '0',
-        ratingMinusDay: data.rating_minus_day ?? '0',
-        ratingMinusWeek: data.rating_minus_week ?? '0'
+        shellsDay: String(data.shells_day ?? '0'),
+        shellsWeek: String(data.shells_week ?? '0'),
+        ratingPlusDay: String(data.rating_plus_day ?? '0'),
+        ratingPlusWeek: String(data.rating_plus_week ?? '0'),
+        ratingMinusDay: String(data.rating_minus_day ?? '0'),
+        ratingMinusWeek: String(data.rating_minus_week ?? '0')
       };
+
+      // рейтинг и ранг из БД (если clan_rating текст — Number(...))
+      if (data.clan_rating !== undefined && data.clan_rating !== null) {
+        currentClanRating = Number(data.clan_rating) || 0;
+      }
+      const rank = data.clan_rank || getClanRankByRating(currentClanRating);
+
+      // верхняя карточка
+      const mainRatingEl = document.getElementById('clanRatingDisplay');
+      const mainRankEl = document.getElementById('clanRankDisplay');
+      if (mainRatingEl) mainRatingEl.textContent = String(currentClanRating);
+      if (mainRankEl) mainRankEl.textContent = rank;
+
+      // подпись в блоке КВ
+      const kvRatingEl = document.getElementById('kv-current-rating-label');
+      const kvRankEl = document.getElementById('kv-current-rank-label');
+      if (kvRatingEl) kvRatingEl.textContent = String(currentClanRating);
+      if (kvRankEl) kvRankEl.textContent = rank;
     }
   } catch (e) {
     console.error('Ошибка загрузки clan_stats из Supabase', e);
   }
 
+  // цифры в блоке "Статистика клана"
   const mapIds = {
     shellsDay: 'stat-shells-day',
     shellsWeek: 'stat-shells-week',
@@ -2206,6 +2508,8 @@ async function saveClanStats() {
       .from('statitstiks')
       .upsert({
         id: 1,
+        clan_rating: String(currentClanRating),
+        clan_rank: getClanRankByRating(currentClanRating),
         shells_day: stats.shellsDay,
         shells_week: stats.shellsWeek,
         rating_plus_day: stats.ratingPlusDay,
@@ -2221,14 +2525,27 @@ async function saveClanStats() {
     console.error('Ошибка сохранения clan_stats в Supabase', e);
   }
 }
+
+
+
 function pushHistory() {
   if (!mapCanvas || isRestoringHistory) return;
-  const json = mapCanvas.toJSON();
+
+  const json = JSON.stringify(mapCanvas.toJSON());
+
+  if (historyStack.length > 0) {
+    const last = historyStack[historyStack.length - 1];
+    if (last === json) return;
+  }
+
   historyStack.push(json);
+
   if (historyStack.length > historyLimit) {
     historyStack.shift();
   }
 }
+
+
 
 async function loadPlayersFromServer() {
   try {
@@ -2324,7 +2641,232 @@ function submitAuth() {
 
 // проверяем при загрузке
 checkAuthOnLoad();
+console.log('currentClanRating INIT =', currentClanRating);
+// === КВ РЕЙТИНГ / ГИЛЬЗЫ ===
 
+// исходный рейтинг клана (можно потом грузить из Supabase)
+var currentClanRating = 0;
+
+// ранги по рейтингу:
+// <1100  -> F
+// 1100–1249 -> E
+// 1250–1499 -> D
+// 1500–1749 -> C
+// 1750–1999 -> B
+// 2000–2129 -> A
+// 2130+     -> S
+function getClanRankByRating(r) {
+  if (r < 1100) return "F";
+  if (r < 1250) return "E";
+  if (r < 1500) return "D";
+  if (r < 1750) return "C";
+  if (r < 2000) return "B";
+  if (r < 2130) return "A";
+  return "S";
+}
+
+// сколько гильз даёт один матч при текущем тире
+function getShellsForMatch(rank, result) {
+  if (result === "skip") return 0;
+  const upper = rank;
+
+  if (upper === "E") {
+    return result === "win" ? 1250 : 250;
+  }
+  if (upper === "D") {
+    return result === "win" ? 1500 : 500;
+  }
+  // C / B / A / S
+  return result === "win" ? 2400 : 800;
+}
+
+// создаём блок управления КВ в табе Stats
+function initKvControls() {
+  const statsTab = document.getElementById("stats");
+  if (!statsTab) return;
+  if (document.getElementById("kv-controls")) return; // уже есть
+
+  const block = document.createElement("div");
+  block.id = "kv-controls";
+  block.style.marginTop = "2rem";
+  block.style.padding = "1.5rem";
+  block.style.borderRadius = "16px";
+  block.style.border = "1px solid rgba(255,255,255,0.15)";
+  block.style.background = "rgba(0,0,0,0.7)";
+
+  block.innerHTML = `
+    <div style="font-size:1rem; font-weight:600; margin-bottom:0.75rem;">
+      КВ: расчёт рейтинга и гильз за день
+    </div>
+    <div style="font-size:0.85rem; opacity:0.8; margin-bottom:0.75rem;">
+      Отметь итог каждого этапа за день (максимум 9 игр). Текущий рейтинг клана сейчас:
+      <span id="kv-current-rating-label"></span>, ранг:
+      <span id="kv-current-rank-label"></span>.
+    </div>
+    <div id="kv-matches" style="display:flex; flex-wrap:wrap; gap:0.5rem; margin-bottom:1rem;"></div>
+    <button id="kv-calc-btn" style="
+      padding:0.7rem 1.2rem;
+      border-radius:12px;
+      border:none;
+      cursor:pointer;
+      background:#4ecdc4;
+      color:#000;
+      font-weight:600;
+      margin-right:0.75rem;
+    ">Посчитать КВ за день</button>
+    <span id="kv-result-label" style="font-size:0.9rem; opacity:0.85;"></span>
+  `;
+
+  statsTab.appendChild(block);
+
+  const matchesContainer = document.getElementById("kv-matches");
+  const slots = 9; // этапов в день
+  for (let i = 1; i <= slots; i++) {
+    const wrap = document.createElement("div");
+    wrap.style.display = "flex";
+    wrap.style.flexDirection = "column";
+    wrap.style.gap = "0.25rem";
+    wrap.style.minWidth = "110px";
+
+    const label = document.createElement("div");
+    label.style.fontSize = "0.8rem";
+    label.style.opacity = "0.8";
+    label.textContent = `Этап ${i}`;
+
+    const select = document.createElement("select");
+    select.id = `kv-match-${i}`;
+    select.style.padding = "0.4rem 0.6rem";
+    select.style.borderRadius = "8px";
+    select.style.border = "1px solid rgba(255,255,255,0.3)";
+    select.style.background = "rgba(10,10,10,0.9)";
+    select.style.color = "#e0e0e0";
+    select.innerHTML = `
+      <option value="skip">—</option>
+      <option value="win">Победа</option>
+      <option value="loss">Поражение</option>
+    `;
+
+    wrap.appendChild(label);
+    wrap.appendChild(select);
+    matchesContainer.appendChild(wrap);
+  }
+
+  document.getElementById("kv-calc-btn").onclick = applyKvDay;
+}
+
+// применяем результаты КВ за день
+function applyKvDay() {
+  let rating = currentClanRating;
+  let shellsDelta = 0;
+  let ratingDelta = 0;
+
+  const matches = [];
+  for (let i = 1; i <= 9; i++) {
+    const sel = document.getElementById(`kv-match-${i}`);
+    if (!sel) continue;
+    const val = sel.value; // win / loss / skip
+    if (val === "skip") continue;
+    matches.push(val);
+  }
+
+  if (matches.length === 0) {
+    document.getElementById("kv-result-label").textContent =
+      "Не выбрано ни одного этапа.";
+    return;
+  }
+
+  for (const result of matches) {
+    const rankBefore = getClanRankByRating(rating);
+    const shells = getShellsForMatch(rankBefore, result);
+    shellsDelta += shells;
+
+    if (result === "win") {
+      rating += 50;
+      ratingDelta += 50;
+    } else if (result === "loss") {
+      rating -= 50;
+      ratingDelta -= 50;
+    }
+  }
+
+  // обновляем глобальный рейтинг
+  currentClanRating = rating;
+  const newRank = getClanRankByRating(rating);
+  const resLabel = document.getElementById("kv-result-label");
+  resLabel.textContent =
+    `Итог за день: рейтинга ${
+      ratingDelta >= 0 ? "+" : ""
+    }${ratingDelta}, гильз +${shellsDelta}. Новый рейтинг: ${rating} (${newRank}).`;
+
+  // блок КВ
+  const ratingLabel = document.getElementById("kv-current-rating-label");
+  const rankLabel = document.getElementById("kv-current-rank-label");
+  if (ratingLabel) ratingLabel.textContent = String(rating);
+  if (rankLabel) rankLabel.textContent = newRank;
+
+  // карточки на главной
+  const mainRatingEl = document.getElementById("clanRatingDisplay");
+  const mainRankEl = document.getElementById("clanRankDisplay");
+  if (mainRatingEl) mainRatingEl.textContent = String(currentClanRating);
+  if (mainRankEl) mainRankEl.textContent = newRank;
+
+  // рейтинг за день
+  const ratingPlusDayEl = document.getElementById("stat-rating-plus-day");
+  const ratingMinusDayEl = document.getElementById("stat-rating-minus-day");
+
+  if (ratingDelta >= 0 && ratingPlusDayEl) {
+    const prev = Number(ratingPlusDayEl.textContent || "0") || 0;
+    ratingPlusDayEl.textContent = String(prev + ratingDelta);
+  } else if (ratingDelta < 0 && ratingMinusDayEl) {
+    const prev = Number(ratingMinusDayEl.textContent || "0") || 0;
+    ratingMinusDayEl.textContent = String(prev + Math.abs(ratingDelta));
+  }
+
+  // рейтинг за неделю
+  const ratingPlusWeekEl = document.getElementById("stat-rating-plus-week");
+  const ratingMinusWeekEl = document.getElementById("stat-rating-minus-week");
+
+  if (ratingDelta >= 0 && ratingPlusWeekEl) {
+    const prev = Number(ratingPlusWeekEl.textContent || "0") || 0;
+    ratingPlusWeekEl.textContent = String(prev + ratingDelta);
+  } else if (ratingDelta < 0 && ratingMinusWeekEl) {
+    const prev = Number(ratingMinusWeekEl.textContent || "0") || 0;
+    ratingMinusWeekEl.textContent = String(prev + Math.abs(ratingDelta));
+  }
+
+  // гильзы день / неделя
+  const shellsDayEl = document.getElementById("stat-shells-day");
+  const shellsWeekEl = document.getElementById("stat-shells-week");
+
+  if (shellsDayEl) {
+    const prev = Number(shellsDayEl.textContent || "0") || 0;
+    shellsDayEl.textContent = String(prev + shellsDelta);
+  }
+  if (shellsWeekEl) {
+    const prev = Number(shellsWeekEl.textContent || "0") || 0;
+    shellsWeekEl.textContent = String(prev + shellsDelta);
+  }
+
+  // АВТОСОХРАНЕНИЕ В SUPABASE
+  saveClanStats();
+}
+// включаем блок, когда DOM готов
+document.addEventListener("DOMContentLoaded", () => {
+  initKvControls();
+  loadClanStats();
+});
   </script>
+  <div id="playerStatsModal" class="map-modal-backdrop">
+  <div class="map-modal">
+    <div style="display:flex; align-items:center; justify-content:space-between; padding:0.75rem 1.25rem; border-bottom:1px solid rgba(255,255,255,0.12);">
+      <div id="playerStatsName" style="font-size:1.4rem; font-weight:700;"></div>
+      <button onclick="closePlayerStats()" style="border:none; background:transparent; color:#fff; font-size:1.6rem; cursor:pointer;">✕</button>
+    </div>
+    <div style="padding:1.5rem; overflow-y:auto; flex:1;">
+      <div id="playerStatsContent" style="font-size:0.95rem; line-height:1.5;"></div>
+    </div>
+  </div>
+</div>
+
 </body>
 </html>
