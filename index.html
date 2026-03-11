@@ -734,7 +734,6 @@
 
   </style>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/fabric.js/5.3.0/fabric.min.js" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
-  <script src="https://unpkg.com/@supabase/supabase-js@2.48.0/dist/umd/supabase.js"></script>
   <script src="https://unpkg.com/@supabase/supabase-js@2.49.1/dist/umd/supabase.js"></script>
   <script>
 
@@ -1472,13 +1471,13 @@ async function openPlayerStats(player) {
   nameEl.textContent = player.name;
 
   // тянем статистику по игроку из таблицы players по name
-  let gren_Stage1 = 0;
-  let gren_Stage2 = 0;
-  let gren_Stage3 = 0;
-  let gren_Day1 = 0;
-  let gren_Day2 = 0;
-  let gren_Day3 = 0;
-  let gren_Week = 0;
+  let grenStage1 = 0;
+  let grenStage2 = 0;
+  let grenStage3 = 0;
+  let grenDay1 = 0;
+  let grenDay2 = 0;
+  let grenDay3 = 0;
+  let grenWeek = 0;
 
   const { data, error } = await supabaseClient
     .from('players')
@@ -1486,7 +1485,7 @@ async function openPlayerStats(player) {
     .eq('name', player.name)
     .maybeSingle();
 
-    console.log('stats query', player.name, { data, error });
+  console.log('stats query', player.name, { data, error });
 
   if (!error && data) {
     grenStage1 = Number(data.gren_stage1 ?? 0);
