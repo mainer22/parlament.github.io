@@ -122,6 +122,33 @@ app.post('/api/players', (req, res) => {
   }
 });
 
+// GET /api/stalcraft-profile/:name — тянем профиль игрока из Stalcraft API
+app.get('/api/stalcraft-profile/:name', async (req, res) => {
+  try {
+    const name = req.params.name;
+    const region = 'ru';
+
+    // Пробуем APP token (публичный профиль)
+    const url = `https://eapi.stalcraft.net/${region}/character/by-name/${encodeURIComponent(name)}/profile`;
+
+    const response = await fetch(url, {
+      headers: { 'Authorization': `Bearer ${APP_ACCESS_TOKEN}` }
+    });
+
+    const text = await response.text();
+    console.log(`[stalcraft-profile] ${name} → ${response.status}`, text.slice(0, 300));
+
+    if (!response.ok) {
+      return res.status(response.status).json({ error: `Stalcraft API error ${response.status}`, raw: text });
+    }
+
+    res.json(JSON.parse(text));
+  } catch (e) {
+    console.error('/api/stalcraft-profile error', e);
+    res.status(500).json({ error: e.message });
+  }
+});
+
 // Все не-API запросы отдаем на index.html (SPA)
 app.use((req, res, next) => {
   if (req.path.startsWith('/api/')) {
